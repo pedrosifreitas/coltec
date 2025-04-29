@@ -1,32 +1,66 @@
 package org.teiacoltec.poo.at1;
-import org.teiacoltec.poo.at1.interfaces.Domestico;
+import org.teiacoltec.poo.at1.excecoes.AnimalJaExisteException;
+import org.teiacoltec.poo.at1.excecoes.AnimalNaoExisteException;
 
-public class Zoologico{
-    public static void main(String[] args) {
-        Mamifero lontra = new Mamifero("Limbo", 12, "Krrr!", "Curto");
-        Reptil camaleao = new Reptil("Zima", 6, "...", "Escamosa");
-        Ave cacatua = new Ave("Lia", 21, 5.12);
+public class Zoologico {
+    private Animal animais[];
 
-        exibirAnimal(lontra);
-        exibirAnimal(camaleao);
-        exibirAnimal(cacatua);
-
-        System.out.println(lontra.getNome() + " tem pelos do tipo " + lontra.getTipoDePelo());
-        cacatua.emitirSom(20);
-
-        Calopsita Amarelinha = new Calopsita("Amarelinha", 0, "*Oitava sinfonia de Beethoven*");
-        interagirComAnimalDomestico(Amarelinha);
-    }
-
-    public static void interagirComAnimalDomestico(Domestico pet)
+    public Zoologico()
     {
-        pet.levarParaPassear("Rondônia");
-        pet.brincar();
+        animais = new Animal[0];
     }
 
-    public static void exibirAnimal(Animal animal){
-        System.out.println("Este é o " + animal.getNome() + ". Ele tem " + animal.getIdade() + " anos de idade.");
-        System.out.println("Ouça um dos sons que ele faz:");
-        animal.emitirSom();
+    public Animal[] getAnimais() { return animais; }
+
+    public void Adicionar(Animal animal) throws AnimalJaExisteException
+    {
+        for(int i = 0; i < animais.length && animais.length != 0; i ++)
+            if(animais[i].getNome().equals( animal.getNome() ))
+                throw new AnimalJaExisteException();
+
+        Animal tmp_animais[] = animais;
+        animais = new Animal[animais.length + 1];
+        animais[tmp_animais.length] = animal;
+
+        System.arraycopy(
+            tmp_animais, 0, 
+            animais, 0, 
+            tmp_animais.length
+        );
+    }
+    
+    public void Remover(String nome) throws AnimalNaoExisteException
+    {
+        for(int i = 0; i < animais.length; i ++)
+            if(animais[i].getNome().equals( nome ))
+            {
+                Animal tmp_animais[] = animais;
+
+                tmp_animais[i] = animais[animais.length - 1];
+                animais = new Animal[animais.length - 1];
+
+                System.arraycopy(
+                    tmp_animais, 0,
+                    animais, 0, 
+                    animais.length - 1
+                );
+
+                return;
+            }
+        
+
+        //joga exceção se o código não parou antes (ou seja, não achou o nome do animal)
+        throw new AnimalNaoExisteException();
+    }
+
+    public Animal BuscarAnimal(String nome) throws AnimalNaoExisteException
+    {
+        for(int i = 0; i < animais.length; i ++)
+            if(animais[i].getNome().equals( nome ))
+                return animais[i];
+        
+
+        //joga exceção se o código não parou antes (ou seja, não achou o nome do animal)
+        throw new AnimalNaoExisteException();
     }
 }
